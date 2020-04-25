@@ -67,6 +67,35 @@ class TestParams(unittest.TestCase):
         self.assertEqual(result['message'], 'params error')
         self.assertEqual(result['data'], None)
 
+    # 传递一个不存在的 key
+    def test_params_not_exits(self):
+        s = requests.session()
+        data = {'Name': 'ahojcn', 'Height': 175,
+                'Weight': 85, 'Gender': 'male',
+                'Age': 21, 'Email': 'ahojcn@qq.com',
+                'TestKey': 'TestKey'}
+        r = s.post(url=self.url, headers=self.headers, data=json.dumps(data))
+        result = r.json()
+
+        # check
+        self.assertEqual(result['status'], 0)
+        self.assertEqual(result['message'], 'ok')
+        self.assertEqual(result['data'], self.data)
+
+    # 测试非法字符
+    def test_params_illegal_char(self):
+        s = requests.session()
+        data = {'Name': '≈¬åßååç≈çœ∑￿π', 'Height': 175,
+                'Weight': 85, 'Gender': 'male',
+                'Age': 21, 'Email': 'ahojcn@qq.com'}
+        r = s.post(url=self.url, headers=self.headers, data=json.dumps(data))
+        result = r.json()
+
+        # check
+        self.assertEqual(result['status'], 0)
+        self.assertEqual(result['message'], 'ok')
+        self.assertEqual(result['data'], data)
+
     # 传递所有参数为空
     def test_params_no_reference_all(self):
         s = requests.session()
